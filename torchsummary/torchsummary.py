@@ -6,7 +6,7 @@ from collections import OrderedDict
 import numpy as np
 
 
-def summary(model, input_size, batch_size=-1, device="cuda"):
+def summary(model, input_size, batch_size=-1, device="cuda", mode='float'):
 
     def register_hook(module):
 
@@ -48,9 +48,19 @@ def summary(model, input_size, batch_size=-1, device="cuda"):
     ], "Input device is not valid, please specify 'cuda' or 'cpu'"
 
     if device == "cuda" and torch.cuda.is_available():
-        dtype = torch.cuda.FloatTensor
+        if mode == "int64" or mode == "long":
+            dtype = torch.cuda.LongTensor
+        elif mode == "int32" or mode == "int":
+            dtype = torch.cuda.LongTensor
+        else:
+            dtype = torch.cuda.FloatTensor
     else:
-        dtype = torch.FloatTensor
+        if mode == "int64" or mode == "long":
+            dtype = torch.LongTensor
+        elif mode == "int32" or mode == "int":
+            dtype = torch.LongTensor
+        else:
+            dtype = torch.FloatTensor
 
     # multiple inputs to the network
     if isinstance(input_size, tuple):
